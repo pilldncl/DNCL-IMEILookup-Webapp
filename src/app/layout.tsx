@@ -4,9 +4,6 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'DNCL IMEI Lookup',
   description: 'IMEI and Serial Number device lookup with Phonecheck and ICE Q APIs',
-  icons: {
-    icon: '/logo.png',
-  },
 }
 
 export default function RootLayout({

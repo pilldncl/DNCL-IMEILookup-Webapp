@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import FirebaseSearch from '@/components/FirebaseSearch';
 
 export default function FirebaseSearchPage() {
@@ -10,6 +11,13 @@ export default function FirebaseSearchPage() {
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-4">
+            <Image
+              src="/logo.png"
+              alt="DNCL Logo"
+              width={40}
+              height={40}
+              className="object-contain"
+            />
             <Link href="/" className="text-primary hover:text-blue-700 font-semibold">
               IMEI Lookup
             </Link>

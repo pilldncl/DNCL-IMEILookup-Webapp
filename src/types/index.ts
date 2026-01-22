@@ -21,6 +21,7 @@ export interface DeviceData {
   failed: string;
   tester_name: string;
   repair_notes: string;
+  finance_type?: string;
   _rawData?: any;
 }
 

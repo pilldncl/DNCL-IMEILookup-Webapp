@@ -151,6 +151,14 @@ export default function DeviceDisplay({ data, apiType, rawVisible, onToggleRaw }
             <span className="text-gray-700 mr-3 flex-shrink-0">Grade:</span>
             <b className="text-left max-w-[250px] break-words">{data.grade}</b>
           </div>
+          {apiType === 'phonecheck' && (
+            <div className="flex justify-between mb-1.5 text-base">
+              <span className="text-gray-700 mr-3 flex-shrink-0">Finance Type:</span>
+              <b className="text-left max-w-[250px] break-words">
+                {data.finance_type && data.finance_type.toLowerCase() === 'loan' ? 'Loan' : 'N/A'}
+              </b>
+            </div>
+          )}
           <div className="flex justify-between mb-1.5 text-base">
             <span className="text-gray-700 mr-3 flex-shrink-0">Last Update:</span>
             <b className="text-left max-w-[250px] break-words">{data.latest_update}</b>

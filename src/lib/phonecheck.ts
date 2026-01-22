@@ -58,20 +58,57 @@ export function abstractData(rawData: any): DeviceData {
     };
   }
 
-  let esnResponse: any[] = [];
+  let esnResponse: any = null;
   if (raw.ESNResponse) {
     try {
       esnResponse = typeof raw.ESNResponse === 'string' ? JSON.parse(raw.ESNResponse) : raw.ESNResponse;
     } catch (e) {
-      esnResponse = [];
+      console.error('Error parsing ESNResponse:', e);
+      esnResponse = null;
     }
   }
 
   let carrierFromESN = '';
+  let financeType = '';
+  
+  // Handle carrier extraction (for backward compatibility)
   if (Array.isArray(esnResponse)) {
     const carrierObj = esnResponse.find((e: any) => e.Carrier);
     if (carrierObj) {
       carrierFromESN = carrierObj.Carrier;
+    }
+  }
+  
+  // Extract Finance Type from esnApiResults
+  // ESNResponse structure: { esnApiResults: [{ RawResponse: "Finance Type: LOANOperating..." }] }
+  if (esnResponse && typeof esnResponse === 'object') {
+    let esnApiResults: any[] = [];
+    
+    // Check if esnResponse has esnApiResults property
+    if (esnResponse.esnApiResults && Array.isArray(esnResponse.esnApiResults)) {
+      esnApiResults = esnResponse.esnApiResults;
+    } 
+    // Fallback: if esnResponse itself is an array
+    else if (Array.isArray(esnResponse)) {
+      esnApiResults = esnResponse;
+    }
+    
+    // Search through results for Finance Type
+    for (const result of esnApiResults) {
+      if (result && result.RawResponse && typeof result.RawResponse === 'string') {
+        // Primary regex pattern: Finance Type: LOANOperating...
+        let match = result.RawResponse.match(/Finance\s+Type:\s*([A-Za-z]+)(?=Operating|eSIM|ESN|$)/i);
+        if (match && match[1]) {
+          financeType = match[1].trim();
+          break;
+        }
+        // Fallback pattern: Finance Type: LOAN (with space or newline after)
+        match = result.RawResponse.match(/Finance\s+Type:\s*([A-Za-z]+)(?:\s|$)/i);
+        if (match && match[1]) {
+          financeType = match[1].trim();
+          break;
+        }
+      }
     }
   }
 
@@ -97,5 +134,6 @@ export function abstractData(rawData: any): DeviceData {
     failed: String(raw.Failed || ''),
     tester_name: String(raw.TesterName || ''),
     repair_notes: String(raw.Custom1 || ''),
+    finance_type: financeType || undefined,
   };
 }
